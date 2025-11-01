@@ -1,32 +1,39 @@
-/**
- * Copyright 2025 dcagliola
- * @license Apache-2.0, see LICENSE for full text.
- */
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 
-/**
- * `my-api`
- *
- * @demo index.html
- * @element my-api
- */
 export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
-
   static get tag() {
     return "my-api";
   }
 
-  constructor() {
-    super();
-  }
-
-  // Lit reactive properties
   static get properties() {
     return {
       ...super.properties,
+      city: { type: String },
+      weatherData: { type: Object },
     };
+  }
+
+  constructor() {
+    super();
+    this.city = "New York"; // default city
+    this.weatherData = null;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.getWeather();
+  }
+
+  async getWeather() {
+    try {
+      const response = await fetch(`/api/weather?city=${this.city}`);
+      const data = await response.json();
+      this.weatherData = data;
+    } catch (err) {
+      console.error("Error fetching weather:", err);
+    }
   }
 
   static get styles() {
@@ -57,12 +64,24 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        flex-direction: column;
+        text-align: center;
       }
 
       .image-holder img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+
+      .weather-temp {
+        font-size: 2rem;
+        margin-top: 10px;
+      }
+
+      .weather-desc {
+        text-transform: capitalize;
+        color: #555;
       }
 
       .author-info {
@@ -143,15 +162,23 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   render() {
+    const weather = this.weatherData;
+
     return html`
       <div class="card">
-      <div class="author-info">
+        <div class="author-info">
           <img src="" alt="profile" />
-          <span class="username">Username</span>
+          <span class="username">${this.city}</span>
         </div>
 
         <div class="image-holder">
-          <img src="" alt="image">
+          ${weather
+            ? html`
+              <img src="https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" alt="${weather.weather[0].description}">
+              <div class="weather-temp">${(weather.main.temp - 273.15).toFixed(1)}°C</div>
+              <div class="weather-desc">${weather.weather[0].description}</div>
+            `
+            : html`<span>Loading weather...</span>`}
         </div>
 
         <div class="interact-box">
