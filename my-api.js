@@ -17,7 +17,7 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
-    this.city = "New York"; // default city
+    this.city = "New York"; // default
     this.weatherData = null;
   }
 
@@ -56,6 +56,7 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
         flex-direction: column;
       }
 
+      // With using weather api rn, 'image' isn't exactly the best variable name now, but whateva
       .image-holder {
         width: 100%;
         height: 300px;
@@ -72,16 +73,6 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
         width: 100px;
         height: 100px;
         object-fit: contain;
-      }
-
-      .weather-temp {
-        font-size: 2rem;
-        margin-top: 10px;
-      }
-
-      .weather-desc {
-        text-transform: capitalize;
-        color: #555;
       }
 
       .author-info {
@@ -162,29 +153,30 @@ export class MyApi extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   render() {
+    // Uses weather api
     const weather = this.weatherData;
 
     return html`
       <div class="card">
         <div class="author-info">
-          <img src="" alt="profile" />
+          <img src="" alt="profile picture" />
           <span class="username">${this.city}</span>
         </div>
 
         <div class="image-holder">
           ${weather
             ? html`
-              <img src="https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" alt="${weather.weather[0].description}">
-              <div class="weather-temp">${(weather.main.temp - 273.15).toFixed(1)}°C</div>
+              <img src="https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png">
+              <div class="weather-temp">${(weather.main.temp)}</div>
               <div class="weather-desc">${weather.weather[0].description}</div>
             `
-            : html`<span>Loading weather...</span>`}
+            : html`<span>Loading...</span>`}
         </div>
 
         <div class="interact-box">
           <div class="left-actions">
-            <button class="like-btn">Like</button>
-            <button class="dislike-btn">Dislike</button>
+            <button class="like-btn">❤️</button>
+            <button class="dislike-btn">💔</button>
           </div>
           <button class="share-btn">Share</button>
 
